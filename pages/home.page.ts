@@ -8,15 +8,21 @@ export class HomePage {
   readonly accountDeletedMessage: Locator;
   readonly continueButton: Locator;
   readonly logoutLink: Locator;
+  readonly testCasesLink: Locator;
+  readonly productsLink: Locator;
+  readonly cartLink: Locator;
 
   constructor(private readonly page: Page) {
     this.homeLink = page.getByRole('link', { name: /Home/ });
-    this.signupLoginLink = page.getByRole('link', { name: /Signup \/ Login/ });
+    this.signupLoginLink = page.locator('a[href="/login"]');
     this.loggedInUser = page.getByText(/Logged in as/);
     this.deleteAccountLink = page.getByRole('link', { name: /Delete Account/ });
     this.accountDeletedMessage = page.getByText('Account Deleted!');
     this.continueButton = page.locator('[data-qa="continue-button"]');
-    this.logoutLink = page.getByRole('link', { name: /Logout/ });
+    this.logoutLink = page.locator('a[href="/logout"]');
+    this.testCasesLink = page.locator('a[href="/test_cases"]').first();
+    this.productsLink = page.locator('a[href="/products"]').first();
+    this.cartLink = page.locator('a[href="/view_cart"]').first();
   }
 
  async goto(): Promise<void> {
@@ -28,7 +34,23 @@ export class HomePage {
   }
 
   async openLogin(): Promise<void> {
-    await this.signupLoginLink.click();
+    await this.signupLoginLink.click({ force: true });
+  }
+
+  async openContact(): Promise<void> {
+    await this.page.locator('a[href="/contact_us"]').click({ force: true });
+  }
+
+  async openTestCases(): Promise<void> {
+    await this.testCasesLink.click({ force: true });
+  }
+
+  async openProducts(): Promise<void> {
+    await this.productsLink.click({ force: true });
+  }
+
+  async openCart(): Promise<void> {
+    await this.cartLink.click({ force: true });
   }
 
   async expectUserLoggedIn(): Promise<void> {

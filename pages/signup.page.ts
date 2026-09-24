@@ -9,6 +9,7 @@ export class SignupPage {
   readonly accountInformationHeading: Locator;
   readonly createAccountButton: Locator;
   readonly accountCreatedMessage: Locator;
+  readonly emailAlreadyExistsError: Locator;
 
   constructor(private readonly page: Page) {
     this.signupNameInput = page.locator('[data-qa="signup-name"]');
@@ -17,6 +18,7 @@ export class SignupPage {
     this.accountInformationHeading = page.getByText('Enter Account Information');
     this.createAccountButton = page.locator('[data-qa="create-account"]');
     this.accountCreatedMessage = page.getByText('Account Created!');
+    this.emailAlreadyExistsError = page.getByText('Email Address already exist!');
   }
 
   async startSignup(name: string, email: string): Promise<void> {
@@ -26,14 +28,20 @@ export class SignupPage {
     await expect(this.accountInformationHeading).toBeVisible();
   }
 
+  async attemptSignup(name: string, email: string): Promise<void> {
+    await this.signupNameInput.fill(name);
+    await this.signupEmailInput.fill(email);
+    await this.signupButton.click();
+  }
+
   async completeSignup(data: SignupData): Promise<void> {
     await this.page.locator('#id_gender1').check();
     await this.page.locator('[data-qa="password"]').fill(data.password);
     await this.page.locator('[data-qa="days"]').selectOption(data.birthDay, { force: true });
     await this.page.locator('[data-qa="months"]').selectOption(data.birthMonth, { force: true });
     await this.page.locator('[data-qa="years"]').selectOption(data.birthYear, { force: true });
-    await this.page.locator('#newsletter').check();
-    await this.page.locator('#optin').check();
+    await this.page.locator('#newsletter').check({ force: true });
+    await this.page.locator('#optin').check({ force: true });
     await this.page.locator('[data-qa="first_name"]').fill(data.firstName);
     await this.page.locator('[data-qa="last_name"]').fill(data.lastName);
     await this.page.locator('[data-qa="company"]').fill(data.company);
@@ -44,7 +52,7 @@ export class SignupPage {
     await this.page.locator('[data-qa="city"]').fill(data.city);
     await this.page.locator('[data-qa="zipcode"]').fill(data.zipcode);
     await this.page.locator('[data-qa="mobile_number"]').fill(data.mobileNumber);
-    await this.createAccountButton.click();
+    await this.createAccountButton.click({ force: true });
     await expect(this.accountCreatedMessage).toBeVisible();
   }
 

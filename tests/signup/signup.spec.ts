@@ -1,6 +1,8 @@
 import { expect, test } from '../../fixtures/signup.fixture';
 
 test.describe('Signup', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test('creates a new account', async ({ homePage, loginPage, signupPage, signupData }) => {
     await homePage.goto();
     await homePage.openLogin();
@@ -16,6 +18,30 @@ test.describe('Signup', () => {
     await loginPage.login(signupData.email, signupData.password);
     await homePage.expectUserLoggedIn();
 
+    await homePage.deleteAccount();
+    await homePage.continueAfterAccountDeletion();
+  });
+
+  test('rejects an already registered email address', async ({
+    homePage,
+    loginPage,
+    signupPage,
+    signupData,
+  }) => {
+    await homePage.goto();
+    await homePage.openLogin();
+    await signupPage.startSignup(signupData.name, signupData.email);
+    await signupPage.completeSignup(signupData);
+    await signupPage.continueToApplication();
+    await homePage.expectUserLoggedIn();
+
+    await homePage.logout();
+    await homePage.openLogin();
+    await signupPage.attemptSignup(signupData.name, signupData.email);
+    await expect(signupPage.emailAlreadyExistsError).toBeVisible();
+
+    await loginPage.login(signupData.email, signupData.password);
+    await homePage.expectUserLoggedIn();
     await homePage.deleteAccount();
     await homePage.continueAfterAccountDeletion();
   });
