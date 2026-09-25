@@ -15,5 +15,6 @@ export class ProductsPage {
 
   async openFirstProduct(): Promise<void> {
     await this.firstViewProductLink.click();
+    await this.page.waitForURL(/\/product_details\//);
   }
 }

@@ -18,7 +18,10 @@ export class LoginPage {
   async login(email: string, password: string): Promise<void> {
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
-    await this.loginButton.click();
+    await Promise.all([
+      this.page.waitForURL((url) => url.pathname === '/', { waitUntil: 'domcontentloaded' }),
+      this.loginButton.click(),
+    ]);
   }
 
   async expectLoginPageVisible(): Promise<void> {
