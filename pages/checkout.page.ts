@@ -1,5 +1,4 @@
 import { expect, Locator, Page } from '@playwright/test';
-
 import { PaymentData } from '../builders/payment-data.builder';
 
 export class CheckoutPage {
@@ -12,20 +11,24 @@ export class CheckoutPage {
   readonly payAndConfirmButton: Locator;
   readonly orderPlacedMessage: Locator;
   readonly downloadInvoiceLink: Locator;
-  readonly continueLink: Locator;
+  readonly continueBtn: Locator;
 
-  constructor(private readonly page: Page) {
-    this.placeOrderLink = page.getByRole('link', { name: 'Place Order', exact: true });
-    this.nameOnCardInput = page.locator('input[name="name_on_card"]');
-    this.cardNumberInput = page.locator('input[name="card_number"]');
-    this.cvcInput = page.locator('input[name="cvc"]');
-    this.expiryMonthInput = page.locator('input[name="expiry_month"]');
-    this.expiryYearInput = page.locator('input[name="expiry_year"]');
-    this.payAndConfirmButton = page.getByRole('button', { name: 'Pay and Confirm Order' });
-    this.orderPlacedMessage = page.getByText('Order Placed!', { exact: true });
-    this.downloadInvoiceLink = page.getByRole('link', { name: 'Download Invoice', exact: true });
-    this.continueLink = page.getByRole('link', { name: 'Continue', exact: true });
-  }
+ // pages/checkout.page.ts
+constructor(private readonly page: Page) {
+  this.placeOrderLink = page.getByRole('link', { name: 'Place Order', exact: true });
+  this.nameOnCardInput = page.locator('input[name="name_on_card"]');
+  this.cardNumberInput = page.locator('input[name="card_number"]');
+  this.cvcInput = page.locator('input[name="cvc"]');
+  this.expiryMonthInput = page.locator('input[name="expiry_month"]');
+  this.expiryYearInput = page.locator('input[name="expiry_year"]');
+  this.payAndConfirmButton = page.getByRole('button', { name: 'Pay and Confirm Order' });
+  
+  // Fix: Target the unique data-qa element directly to avoid strict mode violations
+  this.orderPlacedMessage = page.locator('[data-qa="order-placed"]');
+  
+  this.downloadInvoiceLink = page.getByRole('link', { name: 'Download Invoice', exact: true });
+  this.continueBtn = page.locator('[data-qa="continue-button"]');
+}
 
   async placeOrder(): Promise<void> {
     await this.placeOrderLink.click();
@@ -41,7 +44,7 @@ export class CheckoutPage {
   }
 
   async expectOrderPlaced(): Promise<void> {
-    await expect(this.orderPlacedMessage).toBeVisible();
+    await expect(this.orderPlacedMessage).toBeVisible({ timeout: 10000 });
   }
 
   async downloadInvoice(): Promise<import('@playwright/test').Download> {
@@ -51,6 +54,7 @@ export class CheckoutPage {
   }
 
   async continue(): Promise<void> {
-    await this.continueLink.click();
+    await this.continueBtn.waitFor({ state: 'visible', timeout: 10000 });
+    await this.continueBtn.click();
   }
 }

@@ -11,6 +11,9 @@ test.describe('Checkout', () => {
     productDetailsPage,
     productsPage,
   }) => {
+    // Extend timeout for full multi-page UI flow
+    test.setTimeout(60000);
+
     expect(checkoutCredentials.email).not.toBe('');
     expect(checkoutCredentials.password).not.toBe('');
 
@@ -40,6 +43,9 @@ test.describe('Checkout', () => {
 
     const download = await checkoutPage.downloadInvoice();
     expect(download.suggestedFilename()).toMatch(/invoice/i);
+
+    // Wait for continue button and navigate home
     await checkoutPage.continue();
+    await homePage.expectHomePageVisible();
   });
 });
