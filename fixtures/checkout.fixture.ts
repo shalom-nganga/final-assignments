@@ -45,8 +45,9 @@ export const test = base.extend<CheckoutFixtures>({
   checkoutCredentials: async ({}, use) => {
     await use(
       buildLoginCredentials({
-        email: process.env.CHECKOUT_EMAIL ?? process.env.SIGNUP_EMAIL ?? '',
-        password: process.env.CHECKOUT_PASSWORD ?? process.env.SIGNUP_PASSWORD ?? '',
+        // fixtures/login.fixture.ts (or wherever checkoutCredentials/validCredentials are created)
+         email: process.env.TEST_EMAIL || 'shalomnganga119@gmail.com',
+        password: process.env.TEST_PASSWORD || '@C7FH93yiZa9Qm',
       }),
     );
   },

@@ -19,8 +19,8 @@ export const test = base.extend<LoginFixtures>({
   validCredentials: async ({}, use) => {
     await use(
       buildLoginCredentials({
-        email: process.env.LOGIN_EMAIL ?? process.env.CHECKOUT_EMAIL ?? '',
-        password: process.env.LOGIN_PASSWORD ?? process.env.CHECKOUT_PASSWORD ?? '',
+        email: process.env.TEST_EMAIL || 'shalomnganga119@gmail.com',
+        password: process.env.TEST_PASSWORD || '@C7FH93yiZa9Qm',
       }),
     );
   },
