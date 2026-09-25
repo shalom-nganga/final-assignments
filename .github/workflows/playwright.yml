@@ -36,6 +36,8 @@ jobs:
       run: npx playwright test
       env:
         CI: true
+        TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+        TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
 
     - name: Install Allure Commandline
       if: always()
